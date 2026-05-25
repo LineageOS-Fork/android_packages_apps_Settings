@@ -104,17 +104,15 @@ class BlurSettings : Fragment() {
     fun BlurSettingsScreen() {
         val context = LocalContext.current
         val cr = context.contentResolver
-
+        
         val blurEnabledByDefault = SystemProperties.getBoolean("ro.custom.blur.enable", false)
 
         var blursEnabled by remember {
             mutableStateOf(Settings.Global.getInt(cr, Settings.Global.DISABLE_WINDOW_BLURS, if (blurEnabledByDefault) 0 else 1) == 0)
         }
-
-        val maxBlurPx = (34f * context.resources.displayMetrics.density)
-
+        
         var blurRadius by remember {
-            mutableStateOf(Settings.Secure.getFloat(cr, "system_blur_radius", maxBlurPx))
+            mutableStateOf(Settings.Secure.getFloat(cr, "system_blur_radius", 34f))
         }
 
         Scaffold(
@@ -155,8 +153,8 @@ class BlurSettings : Fragment() {
                         onValueChangeFinished = {
                             Settings.Secure.putFloat(cr, "system_blur_radius", blurRadius)
                         },
-                        valueRange = 0f..maxBlurPx,
-                        displayValue = "${(blurRadius / maxBlurPx * 100).roundToInt()}%",
+                        valueRange = 0f..34f,
+                        displayValue = "${(blurRadius / 34f * 100).roundToInt()}%",
                         enabled = blursEnabled,
                         position = PreferencePosition.Single
                     )
@@ -207,7 +205,7 @@ class BlurSettings : Fragment() {
                         WallpaperImage(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .blur((radius / context.resources.displayMetrics.density).dp)
+                                .blur(radius.dp)
                         )
 
                         Box(
